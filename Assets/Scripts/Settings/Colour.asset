@@ -60,7 +60,7 @@ MonoBehaviour:
         key7: {r: 1, g: 1, b: 1, a: 0}
         ctime0: 1426
         ctime1: 7806
-        ctime2: 12143
+        ctime2: 14726
         ctime3: 24865
         ctime4: 45335
         ctime5: 65535
@@ -127,7 +127,7 @@ MonoBehaviour:
         ctime0: 1426
         ctime1: 5127
         ctime2: 12143
-        ctime3: 20817
+        ctime3: 22359
         ctime4: 47224
         ctime5: 55898
         ctime6: 65535
@@ -150,7 +150,7 @@ MonoBehaviour:
     noise:
       filterType: 0
       simpleNoiseSettings:
-        strength: 1
+        strength: 0
         numLayers: 3
         baseRoughness: 1
         roughness: 2
@@ -168,7 +168,7 @@ MonoBehaviour:
         weightMultiplier: 0.8
     noiseOffset: 1.77
     noiseStrength: 0.1
-    blendAmount: 0.435
+    blendAmount: 0.512
   oceanColour:
     serializedVersion: 2
     key0: {r: 0.09450968, g: 0.038631994, b: 0.6500002, a: 1}
@@ -195,7 +195,7 @@ MonoBehaviour:
     atime5: 0
     atime6: 0
     atime7: 0
-    m_Mode: 2
+    m_Mode: 0
     m_ColorSpace: 0
     m_NumColorKeys: 4
     m_NumAlphaKeys: 2
