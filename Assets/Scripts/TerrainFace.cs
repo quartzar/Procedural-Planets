@@ -5,6 +5,7 @@ using UnityEngine;
 public class TerrainFace
 {
     private ShapeGenerator _shapeGenerator;
+    private ColourGenerator _colourGenerator;
     private Mesh _mesh;
     private int _resolution;
     private int _quadResolution;
@@ -20,9 +21,10 @@ public class TerrainFace
     List<int> _triangles;
     List<Vector2> _uvs;
     
-    public TerrainFace(ShapeGenerator shapeGenerator, Mesh mesh, int resolution, int quadResolution, Vector3 localUp, float radius, Planet planetScript)
+    public TerrainFace(ShapeGenerator shapeGenerator, ColourGenerator colourGenerator, Mesh mesh, int resolution, int quadResolution, Vector3 localUp, float radius, Planet planetScript)
     {
         this._shapeGenerator = shapeGenerator;
+        this._colourGenerator = colourGenerator;
         this._mesh = mesh;
         this._resolution = resolution;
         this._quadResolution = quadResolution;
@@ -45,7 +47,7 @@ public class TerrainFace
         _mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32; // This is needed for meshes with more than 65535 [256*256] vertices
         
         // Generate quadtree
-        parentQuad = new Quadtree(_planetScript, null, _localUp.normalized * Planet.size, _radius, 0, _localUp, _axisA, _axisB, _quadResolution, _shapeGenerator);
+        parentQuad = new Quadtree(_planetScript, null, _localUp.normalized * Planet.size, _radius, 0, _localUp, _axisA, _axisB, _quadResolution, _shapeGenerator, _colourGenerator);
         parentQuad.GenerateChildren();
         
         // Retrieve mesh data from quadtree

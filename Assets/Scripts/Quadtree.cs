@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class Quadtree
 {
-    public ShapeGenerator _shapeGenerator;
+    ShapeGenerator _shapeGenerator;
+    ColourGenerator _colourGenerator;
     
     public Quadtree[] _children;
     public Vector3 _position;
@@ -23,7 +24,7 @@ public class Quadtree
     public Vector2[] uvs;
     
     // Constructor
-    public Quadtree(Planet planetScript, Quadtree[] children, Vector3 position, float radius, int detailLevel, Vector3 localUp, Vector3 axisA, Vector3 axisB, int quadResolution, ShapeGenerator shapeGenerator)
+    public Quadtree(Planet planetScript, Quadtree[] children, Vector3 position, float radius, int detailLevel, Vector3 localUp, Vector3 axisA, Vector3 axisB, int quadResolution, ShapeGenerator shapeGenerator, ColourGenerator colourGenerator)
     {
         this.planetScript = planetScript;
         this._children = children;
@@ -35,6 +36,7 @@ public class Quadtree
         this._axisB = axisB;
         this._quadResolution = quadResolution;
         this._shapeGenerator = shapeGenerator;
+        this._colourGenerator = colourGenerator;
         this._normalisedPos = position.normalized;
     }
     
@@ -59,10 +61,10 @@ public class Quadtree
             {
                 // Assign the quadtree children
                 _children = new Quadtree[4];
-                _children[0] = new Quadtree(planetScript, new Quadtree[0], _position + _axisA * _radius / 2 + _axisB * _radius / 2, _radius / 2, _detailLevel + 1, _localUp, _axisA, _axisB, _quadResolution, _shapeGenerator);
-                _children[1] = new Quadtree(planetScript, new Quadtree[0], _position + _axisA * _radius / 2 - _axisB * _radius / 2, _radius / 2, _detailLevel + 1, _localUp, _axisA, _axisB, _quadResolution, _shapeGenerator);
-                _children[2] = new Quadtree(planetScript, new Quadtree[0], _position - _axisA * _radius / 2 + _axisB * _radius / 2, _radius / 2, _detailLevel + 1, _localUp, _axisA, _axisB, _quadResolution, _shapeGenerator);
-                _children[3] = new Quadtree(planetScript, new Quadtree[0], _position - _axisA * _radius / 2 - _axisB * _radius / 2, _radius / 2, _detailLevel + 1, _localUp, _axisA, _axisB, _quadResolution, _shapeGenerator);
+                _children[0] = new Quadtree(planetScript, new Quadtree[0], _position + _axisA * _radius / 2 + _axisB * _radius / 2, _radius / 2, _detailLevel + 1, _localUp, _axisA, _axisB, _quadResolution, _shapeGenerator, _colourGenerator);
+                _children[1] = new Quadtree(planetScript, new Quadtree[0], _position + _axisA * _radius / 2 - _axisB * _radius / 2, _radius / 2, _detailLevel + 1, _localUp, _axisA, _axisB, _quadResolution, _shapeGenerator, _colourGenerator);
+                _children[2] = new Quadtree(planetScript, new Quadtree[0], _position - _axisA * _radius / 2 + _axisB * _radius / 2, _radius / 2, _detailLevel + 1, _localUp, _axisA, _axisB, _quadResolution, _shapeGenerator, _colourGenerator);
+                _children[3] = new Quadtree(planetScript, new Quadtree[0], _position - _axisA * _radius / 2 - _axisB * _radius / 2, _radius / 2, _detailLevel + 1, _localUp, _axisA, _axisB, _quadResolution, _shapeGenerator, _colourGenerator);
                 
                 // Generate the grandchildren
                 foreach (Quadtree child in _children)
@@ -88,7 +90,7 @@ public class Quadtree
         }
         else // Leaf node, i.e. quadtree with no children
         {
-            
+            // Check if quad is within culling angle, if so add to list of quads to be rendered
             if (Mathf.Acos((Mathf.Pow(Planet.size, 2) + Mathf.Pow(planetScript.distanceToPlayer, 2) - 
                             Mathf.Pow(Vector3.Distance(planetScript.transform.TransformDirection(_normalisedPos * Planet.size), planetScript.player.position), 2)) / 
                            (2 * Planet.size * planetScript.distanceToPlayer)) < Planet.cullingMinAngle || Planet.isEditor)
@@ -163,6 +165,7 @@ public class Quadtree
                 float unscaledElevation = _shapeGenerator.CalculateUnscaledElevation(pointOnUnitSphere);
                 quad.vertices[i] = pointOnUnitSphere * _shapeGenerator.GetScaledElevation(unscaledElevation);
                 quad.uvs[i].y = unscaledElevation;
+                quad.uvs[i].x = _colourGenerator.BiomePercentFromPoint(pointOnUnitSphere);
                 
                 if (x < _quadResolution - 1 && y < _quadResolution - 1)
                 {

@@ -58,12 +58,19 @@ public class Planet : MonoBehaviour
     
     public static readonly float[] DetailLevelDistances = new float[] {
         Mathf.Infinity,
+        1000f,
+        500f,
         200f,
         100f,
+        75f,
         50f,
         40f,
         30f,
         20f,
+        10f,
+        5f,
+        2f,
+        1f
     };
     
     public static readonly int MaxDetailLevel = DetailLevelDistances.Length - 1;
@@ -76,7 +83,13 @@ public class Planet : MonoBehaviour
     }
 
     
-    private void FixedUpdate()
+    // private void FixedUpdate()
+    // {
+    //     distanceToPlayer = Vector3.Distance(transform.position, player.position);
+    //     distanceToPlayerSqr = distanceToPlayer * distanceToPlayer;
+    // }
+    
+    private void Update()
     {
         distanceToPlayer = Vector3.Distance(transform.position, player.position);
         distanceToPlayerSqr = distanceToPlayer * distanceToPlayer;
@@ -84,8 +97,8 @@ public class Planet : MonoBehaviour
     
     private void Start()
     {
-        isEditor = false;
         GeneratePlanet();
+        isEditor = false;
         StartCoroutine(PlanetGenerationLoop());
     }
     
@@ -127,7 +140,7 @@ public class Planet : MonoBehaviour
             }
             meshFilters[i].GetComponent<MeshRenderer>().sharedMaterial = new Material(colourSettings.planetMaterial);
             
-            terrainFaces[i] = new TerrainFace(_shapeGenerator, meshFilters[i].sharedMesh, resolution, quadResolution, directions[i], shapeSettings.planetRadius, this);
+            terrainFaces[i] = new TerrainFace(_shapeGenerator, _colourGenerator, meshFilters[i].sharedMesh, resolution, quadResolution, directions[i], shapeSettings.planetRadius, this);
             bool renderFace = faceRenderMask == FaceRenderMask.All || (int)faceRenderMask - 1 == i;
             meshFilters[i].gameObject.SetActive(renderFace);
         }
@@ -135,6 +148,7 @@ public class Planet : MonoBehaviour
     
     public void GeneratePlanet() // general regeneration method
     {
+        isEditor = true;
         Initialise();
         GenerateMesh();
         GenerateColours();
@@ -192,6 +206,7 @@ public class Planet : MonoBehaviour
             }
         }
         _colourGenerator.UpdateElevation(_shapeGenerator.elevationMinMax);
+        // _colourGenerator.UpdateColours();
     }
     
     private void GenerateColours()
