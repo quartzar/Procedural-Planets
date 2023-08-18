@@ -108,7 +108,7 @@ public class Quadtree
     {
         // get distance from player to quadtree with direction
         float dstToPlayer = Vector3.Distance(planetScript.transform.TransformDirection(_normalisedPos * Planet.size) + planetScript.transform.position, planetScript.player.position);
-        Debug.Log("Max detail: " + Planet.MaxDetailLevel);
+        // Debug.Log("Max detail: " + Planet.MaxDetailLevel);
         if (_detailLevel <= Planet.MaxDetailLevel)
         {
             if (dstToPlayer > Planet.DetailLevelDistances[_detailLevel])
