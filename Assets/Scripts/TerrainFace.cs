@@ -14,7 +14,7 @@ public class TerrainFace
     private float _radius;
     
     public Quadtree parentQuad;
-    Planet planetScript;
+    private Planet _planetScript;
     
     List<Vector3> _vertices;
     List<int> _triangles;
@@ -28,7 +28,7 @@ public class TerrainFace
         this._quadResolution = quadResolution;
         this._localUp = localUp;
         this._radius = radius;
-        this.planetScript = planetScript;
+        this._planetScript = planetScript;
         
         _axisA = new Vector3(localUp.y, localUp.z, localUp.x);
         _axisB = Vector3.Cross(localUp, _axisA);
@@ -45,7 +45,7 @@ public class TerrainFace
         _mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32; // This is needed for meshes with more than 65535 [256*256] vertices
         
         // Generate quadtree
-        parentQuad = new Quadtree(planetScript, null, _localUp.normalized * Planet.size, _radius, 0, _localUp, _axisA, _axisB, _quadResolution, _shapeGenerator);
+        parentQuad = new Quadtree(_planetScript, null, _localUp.normalized * Planet.size, _radius, 0, _localUp, _axisA, _axisB, _quadResolution, _shapeGenerator);
         parentQuad.GenerateChildren();
         
         // Retrieve mesh data from quadtree
