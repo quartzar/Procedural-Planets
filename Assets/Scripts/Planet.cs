@@ -9,7 +9,8 @@ public class Planet : MonoBehaviour
     [Range(2, 128)]
     public int resolution = 10;
     [Range(1, 24)]
-    public int quadResolution;
+    public int quadResolution = 8;
+    public static float cullingMinAngle = 1.45f;
     public bool autoUpdate = true;
     public enum FaceRenderMask { All, Top, Bottom, Left, Right, Front, Back };
     public FaceRenderMask faceRenderMask;
@@ -30,10 +31,15 @@ public class Planet : MonoBehaviour
     TerrainFace[] terrainFaces;
     
     // Basic implementation
-    [HideInInspector]
     public Transform player;
-    public static Vector3 playerPosition = new Vector3(Mathf.Infinity, Mathf.Infinity, Mathf.Infinity);
+    // public static Vector3 playerPosition = new Vector3(Mathf.Infinity, Mathf.Infinity, Mathf.Infinity);
+    [HideInInspector]
+    public float distanceToPlayer;
+    [HideInInspector]
+    public float distanceToPlayerSqr;
     public static float size;
+    [HideInInspector]
+    public static bool isEditor = true;
     // [HideInInspector]
     // public float dstToPlayer;
     // [HideInInspector]
@@ -50,7 +56,7 @@ public class Planet : MonoBehaviour
     //     40f,
     // };
     
-    public static float[] detailLevelDistances = new float[] {
+    public static readonly float[] DetailLevelDistances = new float[] {
         Mathf.Infinity,
         200f,
         100f,
@@ -60,24 +66,25 @@ public class Planet : MonoBehaviour
         20f,
     };
     
+    public static readonly int MaxDetailLevel = DetailLevelDistances.Length - 1;
+    
     
     private void Awake()
     {
-        player = GameObject.FindWithTag("Player").transform;
-        // dstToPlayer = Vector3.Distance(transform.position, Player.position);
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+        distanceToPlayer = Vector3.Distance(transform.position, player.position);
     }
 
     
     private void FixedUpdate()
     {
-        playerPosition = player.position;
-        // dstToPlayer = Vector3.Distance(transform.position, Player.position);
-        // dstToPlayerSqr = dstToPlayer * dstToPlayer;
+        distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        distanceToPlayerSqr = distanceToPlayer * distanceToPlayer;
     }
     
     private void Start()
     {
-        // PlayerPosition = player.position;
+        isEditor = false;
         GeneratePlanet();
         StartCoroutine(PlanetGenerationLoop());
     }
@@ -87,7 +94,7 @@ public class Planet : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(0.5f);
-            GenerateMesh();
+            UpdateMesh();
         }
     }
     
@@ -97,7 +104,6 @@ public class Planet : MonoBehaviour
         _shapeGenerator.UpdateSettings(shapeSettings);
         _colourGenerator.UpdateSettings(colourSettings);
         size = shapeSettings.planetRadius;
-
         
         if (meshFilters == null || meshFilters.Length == 0)
         {
@@ -105,9 +111,8 @@ public class Planet : MonoBehaviour
         }
         terrainFaces = new TerrainFace[6];
         
-        
         Vector3[] directions = {Vector3.up, Vector3.down, Vector3.left, Vector3.right, Vector3.forward, Vector3.back};
-        String[] directionStrings = {"Up", "Down", "Left", "Right", "Forward", "Back"};
+        string[] directionStrings = {"Up", "Down", "Left", "Right", "Forward", "Back"};
 
         for (int i = 0; i < 6; i++)
         {
@@ -122,7 +127,7 @@ public class Planet : MonoBehaviour
             }
             meshFilters[i].GetComponent<MeshRenderer>().sharedMaterial = new Material(colourSettings.planetMaterial);
             
-            terrainFaces[i] = new TerrainFace(_shapeGenerator, meshFilters[i].sharedMesh, resolution, quadResolution, directions[i], shapeSettings.planetRadius);
+            terrainFaces[i] = new TerrainFace(_shapeGenerator, meshFilters[i].sharedMesh, resolution, quadResolution, directions[i], shapeSettings.planetRadius, this);
             bool renderFace = faceRenderMask == FaceRenderMask.All || (int)faceRenderMask - 1 == i;
             meshFilters[i].gameObject.SetActive(renderFace);
         }
@@ -165,13 +170,25 @@ public class Planet : MonoBehaviour
     //     _colourGenerator.UpdateElevation(_shapeGenerator.elevationMinMax);
     // }
     
-    private void GenerateMesh()
+    private void GenerateMesh() // generates the mesh
     {
         for (int i = 0; i < 6; i++)
         {
             if (meshFilters[i].gameObject.activeSelf)
             {
                 terrainFaces[i].ConstructTree();
+            }
+        }
+        _colourGenerator.UpdateElevation(_shapeGenerator.elevationMinMax);
+    }
+    
+    private void UpdateMesh() // updates the mesh
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            if (meshFilters[i].gameObject.activeSelf)
+            {
+                terrainFaces[i].UpdateTree();
             }
         }
         _colourGenerator.UpdateElevation(_shapeGenerator.elevationMinMax);
@@ -184,7 +201,7 @@ public class Planet : MonoBehaviour
        {
            if (meshFilters[i].gameObject.activeSelf)
            {
-               terrainFaces[i].UpdateUVs(_colourGenerator);
+               // terrainFaces[i].UpdateUVs(_colourGenerator);
            }
        }
     }

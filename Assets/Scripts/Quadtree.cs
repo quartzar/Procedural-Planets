@@ -4,28 +4,28 @@ using UnityEngine;
 
 public class Quadtree
 {
-    ShapeSettings settings;
+    public ShapeGenerator _shapeGenerator;
     
-    ShapeGenerator _shapeGenerator;
+    public Quadtree[] _children;
+    public Vector3 _position;
+    public float _radius;
+    public int _detailLevel;
+    public Vector3 _localUp;
+    public Vector3 _axisA;
+    public Vector3 _axisB;
+    public int _quadResolution;
+    public Vector3 _normalisedPos;
     
-    Quadtree[] _children;
-    Vector3 _position;
-    float _radius;
-    int _detailLevel;
-    Vector3 _localUp;
-    Vector3 _axisA;
-    Vector3 _axisB;
-    int _quadResolution;
+    public Planet planetScript;
     
-    public void UpdateSettings(ShapeSettings settings)
-    {
-        this.settings = settings;
-    }
-    
+    public Vector3[] vertices;
+    public int[] triangles;
+    public Vector2[] uvs;
     
     // Constructor
-    public Quadtree(Quadtree[] children, Vector3 position, float radius, int detailLevel, Vector3 localUp, Vector3 axisA, Vector3 axisB, int quadResolution, ShapeGenerator shapeGenerator)
+    public Quadtree(Planet planetScript, Quadtree[] children, Vector3 position, float radius, int detailLevel, Vector3 localUp, Vector3 axisA, Vector3 axisB, int quadResolution, ShapeGenerator shapeGenerator)
     {
+        this.planetScript = planetScript;
         this._children = children;
         this._position = position;
         this._radius = radius;
@@ -35,6 +35,7 @@ public class Quadtree
         this._axisB = axisB;
         this._quadResolution = quadResolution;
         this._shapeGenerator = shapeGenerator;
+        this._normalisedPos = position.normalized;
     }
     
     // Quad struct
@@ -50,20 +51,18 @@ public class Quadtree
     public void GenerateChildren()
     {
         // Check detail level between 0 and max level. Max level depends on how many detail levels are defined
-        if (_detailLevel is <= 6 and >= 0)
+        if (_detailLevel <= Planet.MaxDetailLevel && _detailLevel >= 0)
         {
-            // log the below values
-            // Debug.Log("Position: " + _position + " Radius: " + _radius + " Detail level: " + _detailLevel + " Local up: " + _localUp + " Axis A: " + _axisA + " Axis B: " + _axisB + " Quad resolution: " + _quadResolution);// + " Planet radius: " + settings.planetRadius);
-            // Debug.Log("Planet Radius: "+Planet.size);
-            Debug.Log("PlayerPosition: "+Planet.playerPosition);
-            if (Vector3.Distance(_position.normalized * Planet.size, Planet.playerPosition) <= Planet.detailLevelDistances[_detailLevel])
+            //
+            //
+            if (Vector3.Distance(planetScript.transform.TransformDirection(_normalisedPos * Planet.size) + planetScript.transform.position, planetScript.player.position) <= Planet.DetailLevelDistances[_detailLevel])
             {
                 // Assign the quadtree children
                 _children = new Quadtree[4];
-                _children[0] = new Quadtree(new Quadtree[0], _position + _axisA * _radius / 2 + _axisB * _radius / 2, _radius / 2, _detailLevel + 1, _localUp, _axisA, _axisB, _quadResolution, _shapeGenerator);
-                _children[1] = new Quadtree(new Quadtree[0], _position + _axisA * _radius / 2 - _axisB * _radius / 2, _radius / 2, _detailLevel + 1, _localUp, _axisA, _axisB, _quadResolution, _shapeGenerator);
-                _children[2] = new Quadtree(new Quadtree[0], _position - _axisA * _radius / 2 + _axisB * _radius / 2, _radius / 2, _detailLevel + 1, _localUp, _axisA, _axisB, _quadResolution, _shapeGenerator);
-                _children[3] = new Quadtree(new Quadtree[0], _position - _axisA * _radius / 2 - _axisB * _radius / 2, _radius / 2, _detailLevel + 1, _localUp, _axisA, _axisB, _quadResolution, _shapeGenerator);
+                _children[0] = new Quadtree(planetScript, new Quadtree[0], _position + _axisA * _radius / 2 + _axisB * _radius / 2, _radius / 2, _detailLevel + 1, _localUp, _axisA, _axisB, _quadResolution, _shapeGenerator);
+                _children[1] = new Quadtree(planetScript, new Quadtree[0], _position + _axisA * _radius / 2 - _axisB * _radius / 2, _radius / 2, _detailLevel + 1, _localUp, _axisA, _axisB, _quadResolution, _shapeGenerator);
+                _children[2] = new Quadtree(planetScript, new Quadtree[0], _position - _axisA * _radius / 2 + _axisB * _radius / 2, _radius / 2, _detailLevel + 1, _localUp, _axisA, _axisB, _quadResolution, _shapeGenerator);
+                _children[3] = new Quadtree(planetScript, new Quadtree[0], _position - _axisA * _radius / 2 - _axisB * _radius / 2, _radius / 2, _detailLevel + 1, _localUp, _axisA, _axisB, _quadResolution, _shapeGenerator);
                 
                 // Generate the grandchildren
                 foreach (Quadtree child in _children)
@@ -73,6 +72,7 @@ public class Quadtree
             }
         }
     }
+    
     
     // Returns the most recent quad in every branch of the quadtree, i.e. quad to be rendered
     public Quadtree[] GetVisibleChildren()
@@ -88,11 +88,50 @@ public class Quadtree
         }
         else // Leaf node, i.e. quadtree with no children
         {
-            toBeRendered.Add(this);
+            
+            if (Mathf.Acos((Mathf.Pow(Planet.size, 2) + Mathf.Pow(planetScript.distanceToPlayer, 2) - 
+                            Mathf.Pow(Vector3.Distance(planetScript.transform.TransformDirection(_normalisedPos * Planet.size), planetScript.player.position), 2)) / 
+                           (2 * Planet.size * planetScript.distanceToPlayer)) < Planet.cullingMinAngle || Planet.isEditor)
+            {
+                toBeRendered.Add(this);
+            }
+            
+            // toBeRendered.Add(this);
         }
         
         return toBeRendered.ToArray();
     }
+    
+    
+    // Updates the quadtree
+    public void UpdateQuad()
+    {
+        // get distance from player to quadtree with direction
+        float dstToPlayer = Vector3.Distance(planetScript.transform.TransformDirection(_normalisedPos * Planet.size) + planetScript.transform.position, planetScript.player.position);
+        Debug.Log("Max detail: " + Planet.MaxDetailLevel);
+        if (_detailLevel <= Planet.MaxDetailLevel)
+        {
+            if (dstToPlayer > Planet.DetailLevelDistances[_detailLevel])
+            {
+                _children = new Quadtree[0];
+            }
+            else
+            {
+                if (_children.Length > 0)
+                {
+                    foreach (Quadtree child in _children)
+                    {
+                        child.UpdateQuad();
+                    }
+                }
+                else
+                {
+                    GenerateChildren();
+                }
+            }
+        }
+    }
+    
     
     // Mostly from Sebastian Lague
     public Quad CalculateQuad(int triOffset)
@@ -115,30 +154,49 @@ public class Quadtree
                 // Vector3 pointOnCube = _localUp + (percent.x - 0.5f) * 2 * _axisA + (percent.y - 0.5f) * 2 * _axisB;
                 Vector3 pointOnCube = _position + ((percent.x - 0.5f) * 2 * _axisA + (percent.y - 0.5f) * 2 * _axisB) * _radius;
                 
-                // Vector3 pointOnUnitSphere = pointOnCube.normalized;
-                Vector3 pointOnUnitSphere = pointOnCube.normalized * Planet.size;
-                
-                quad.vertices[i] = pointOnUnitSphere;
+                // Vector3 pointOnUnitSphere = pointOnCube.normalized; /////
+                // Vector3 pointOnUnitSphere = pointOnCube.normalized * Planet.size;
+                // quad.vertices[i] = pointOnUnitSphere;
                 
                 // removed while debugging
-                // float unscaledElevation = _shapeGenerator.CalculateUnscaledElevation(pointOnUnitSphere);
-                // quad.vertices[i] = pointOnUnitSphere * _shapeGenerator.GetScaledElevation(unscaledElevation);
-                // quad.uvs[i].y = unscaledElevation;
+                Vector3 pointOnUnitSphere = pointOnCube.normalized;
+                float unscaledElevation = _shapeGenerator.CalculateUnscaledElevation(pointOnUnitSphere);
+                quad.vertices[i] = pointOnUnitSphere * _shapeGenerator.GetScaledElevation(unscaledElevation);
+                quad.uvs[i].y = unscaledElevation;
                 
-                if (x != _quadResolution - 1 && y != _quadResolution - 1)
+                if (x < _quadResolution - 1 && y < _quadResolution - 1)
                 {
-                    quad.triangles[triIndex++] = i + triOffset;
-                    quad.triangles[triIndex++] = i + triOffset + _quadResolution + 1;
-                    quad.triangles[triIndex++] = i + triOffset + _quadResolution;
+                    quad.triangles[triIndex++] = i;
+                    quad.triangles[triIndex++] = i + _quadResolution + 1;
+                    quad.triangles[triIndex++] = i + _quadResolution;
                     
-                    quad.triangles[triIndex++] = i + triOffset;
-                    quad.triangles[triIndex++] = i + triOffset + 1;
-                    quad.triangles[triIndex++] = i + triOffset + _quadResolution + 1;
+                    quad.triangles[triIndex++] = i;
+                    quad.triangles[triIndex++] = i + 1;
+                    quad.triangles[triIndex++] = i + _quadResolution + 1;
                 }
             }
         }
-        // Debug.Log("Planet radius:   " + settings.planetRadius);
+        // Debug.Log("Planet radius:   " + settings.planetRadius)
+        this.vertices = quad.vertices;
+        this.triangles = quad.triangles;
+        this.uvs = quad.uvs;
+        
+        quad.triangles = GetTrianglesWithOffset(triOffset);
+        
         return quad;
     }
     
+    
+    // Return triangles including offset
+    public int[] GetTrianglesWithOffset(int triOffset)
+    {
+        int[] newTriangles = new int[this.triangles.Length];
+
+        for (int i = 0; i < this.triangles.Length; i++)
+        {
+            newTriangles[i] = this.triangles[i] + triOffset;
+        }
+
+        return newTriangles;
+    }
 }
