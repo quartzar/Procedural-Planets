@@ -93,7 +93,7 @@ public class Quadtree
             // Check if quad is within culling angle, if so add to list of quads to be rendered
             if (Mathf.Acos((Mathf.Pow(Planet.size, 2) + Mathf.Pow(planetScript.distanceToPlayer, 2) - 
                             Mathf.Pow(Vector3.Distance(planetScript.transform.TransformDirection(_normalisedPos * Planet.size), planetScript.player.position), 2)) / 
-                           (2 * Planet.size * planetScript.distanceToPlayer)) < Planet.cullingMinAngle || Planet.isEditor)
+                           (2 * Planet.size * planetScript.distanceToPlayer)) < Planet.CullingMinAngle || Planet.isEditor)
             {
                 toBeRendered.Add(this);
             }
