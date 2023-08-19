@@ -6,18 +6,18 @@ public class Quadtree
 {
     ShapeGenerator _shapeGenerator;
     ColourGenerator _colourGenerator;
-    
-    public Quadtree[] _children;
-    public Vector3 _position;
-    public float _radius;
-    public int _detailLevel;
-    public Vector3 _localUp;
-    public Vector3 _axisA;
-    public Vector3 _axisB;
-    public int _quadResolution;
-    public Vector3 _normalisedPos;
-    
-    public Planet planetScript;
+
+    private Quadtree[] _children;
+    private Vector3 _position;
+    private float _radius;
+    private int _detailLevel;
+    private Vector3 _localUp;
+    private Vector3 _axisA;
+    private Vector3 _axisB;
+    private int _quadResolution;
+    private Vector3 _normalisedPos;
+
+    private Planet planetScript;
     
     public Vector3[] vertices;
     public int[] triangles;
@@ -141,8 +141,8 @@ public class Quadtree
         Quad quad = new Quad();
         quad.vertices = new Vector3[_quadResolution * _quadResolution];
         quad.triangles = new int[(_quadResolution - 1) * (_quadResolution - 1) * 6];
-        // quad.uvs = (_mesh.uv.Length == quad.vertices.Length) ? _mesh.uv : new Vector2[quad.vertices.Length];
         quad.uvs = new Vector2[quad.vertices.Length];
+        // quad.uvs = (_mesh.uv.Length == quad.vertices.Length) ? _mesh.uv : new Vector2[quad.vertices.Length];
         
         int triIndex = 0;
         

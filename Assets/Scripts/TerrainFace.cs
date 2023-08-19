@@ -82,12 +82,14 @@ public class TerrainFace
         
         // Retrieve mesh data from quadtree
         int triOffset = 0;
+        int generationCounter = 0;
         foreach (Quadtree child in parentQuad.GetVisibleChildren())
         {
             Quadtree.Quad quad = new Quadtree.Quad();
             if (child.vertices == null || child.vertices.Length == 0)
             {
                 quad = child.CalculateQuad(triOffset);
+                generationCounter++;
             }
             else 
             {
@@ -103,12 +105,15 @@ public class TerrainFace
             triOffset += quad.vertices.Length;
         }
         
-        // Reset mesh and apply new data
-        _mesh.Clear();
-        _mesh.vertices = _vertices.ToArray();
-        _mesh.triangles = _triangles.ToArray();
-        _mesh.RecalculateNormals();
-        _mesh.uv = _uvs.ToArray();
+        // Reset mesh and apply new data, only if the mesh has been updated
+        if (generationCounter > 0)
+        {
+            _mesh.Clear();
+            _mesh.vertices = _vertices.ToArray();
+            _mesh.triangles = _triangles.ToArray();
+            _mesh.RecalculateNormals();
+            _mesh.uv = _uvs.ToArray();
+        }
     }
     
     // public void UpdateUVs(ColourGenerator colourGenerator)

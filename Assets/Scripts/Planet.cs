@@ -58,6 +58,7 @@ public class Planet : MonoBehaviour
     
     public static readonly float[] DetailLevelDistances = new float[] {
         Mathf.Infinity,
+        3000f,
         1000f,
         500f,
         200f,
@@ -107,7 +108,7 @@ public class Planet : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(0.5f);
-            UpdateMesh();
+            yield return StartCoroutine(UpdateMesh());
         }
     }
     
@@ -171,18 +172,6 @@ public class Planet : MonoBehaviour
             GenerateColours();
         }
     }
-
-    // private void GenerateMesh()
-    // {
-    //     for (int i = 0; i < 6; i++)
-    //     {
-    //         if (meshFilters[i].gameObject.activeSelf)
-    //         {
-    //             terrainFaces[i].ConstructMesh();
-    //         }
-    //     }
-    //     _colourGenerator.UpdateElevation(_shapeGenerator.elevationMinMax);
-    // }
     
     private void GenerateMesh() // generates the mesh
     {
@@ -196,16 +185,18 @@ public class Planet : MonoBehaviour
         _colourGenerator.UpdateElevation(_shapeGenerator.elevationMinMax);
     }
     
-    private void UpdateMesh() // updates the mesh
+    private IEnumerator UpdateMesh() // updates the mesh
     {
         for (int i = 0; i < 6; i++)
         {
             if (meshFilters[i].gameObject.activeSelf)
             {
                 terrainFaces[i].UpdateTree();
+                yield return null; // yielding null waits until the next frame
             }
         }
         _colourGenerator.UpdateElevation(_shapeGenerator.elevationMinMax);
+        yield return null; // yielding null waits until the next frame
         // _colourGenerator.UpdateColours();
     }
     
