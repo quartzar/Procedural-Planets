@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class TerrainFace
@@ -70,6 +71,69 @@ public class TerrainFace
         _mesh.uv = _uvs.ToArray();
     }
     
+    // Updates the quadtree MULTITHREAD VERSION
+    // public async void UpdateTree()
+    // {
+    //     // Clear mesh data
+    //     _vertices.Clear();
+    //     _triangles.Clear();
+    //     _uvs.Clear();
+    //
+    //     parentQuad.UpdateQuad();
+    //
+    //     int generationCounter = 0;
+    //
+    //     // Create a separate list for each iteration, so that we can later combine them
+    //     List<Vector3> taskVertices = new List<Vector3>();
+    //     List<int> taskTriangles = new List<int>();
+    //     List<Vector2> taskUvs = new List<Vector2>();
+    //     
+    //     Quadtree[] visibleChildren = parentQuad.GetVisibleChildren();
+    //
+    //     await Task.Run(() => 
+    //     {
+    //         int triOffset = 0;
+    //
+    //         foreach (Quadtree child in visibleChildren)
+    //         {
+    //             Quadtree.Quad quad = new Quadtree.Quad();
+    //             if (child.vertices == null || child.vertices.Length == 0)
+    //             {
+    //                 quad = child.CalculateQuad(triOffset);
+    //                 generationCounter++;
+    //             }
+    //             else 
+    //             {
+    //                 quad.vertices = child.vertices;
+    //                 quad.triangles = child.GetTrianglesWithOffset(triOffset);
+    //                 quad.uvs = child.uvs;
+    //             }
+    //
+    //             taskVertices.AddRange(quad.vertices);
+    //             taskTriangles.AddRange(quad.triangles);
+    //             taskUvs.AddRange(quad.uvs);
+    //         
+    //             triOffset += quad.vertices.Length;
+    //         }
+    //     });
+    //
+    //     // Now back in the main thread, add the results to the original lists
+    //     _vertices.AddRange(taskVertices);
+    //     _triangles.AddRange(taskTriangles);
+    //     _uvs.AddRange(taskUvs);
+    //
+    //     // Reset mesh and apply new data, only if the mesh has been updated
+    //     if (generationCounter > 0)
+    //     {
+    //         _mesh.Clear();
+    //         _mesh.vertices = _vertices.ToArray();
+    //         _mesh.triangles = _triangles.ToArray();
+    //         _mesh.RecalculateNormals();
+    //         _mesh.uv = _uvs.ToArray();
+    //     }
+    // }
+    
+    
     // Updates the quadtree
     public void UpdateTree()
     {
@@ -103,8 +167,9 @@ public class TerrainFace
             _uvs.AddRange(quad.uvs);
             
             triOffset += quad.vertices.Length;
+            
+            
         }
-        
         // Reset mesh and apply new data, only if the mesh has been updated
         if (generationCounter > 0)
         {
@@ -114,6 +179,7 @@ public class TerrainFace
             _mesh.RecalculateNormals();
             _mesh.uv = _uvs.ToArray();
         }
+        
     }
     
     // public void UpdateUVs(ColourGenerator colourGenerator)
