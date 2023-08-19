@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+// using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -10,7 +11,7 @@ public class Planet : MonoBehaviour
     public int resolution = 10;
     [Range(1, 24)]
     public int quadResolution = 8;
-    public static float cullingMinAngle = 1.45f;
+    public static readonly float CullingMinAngle = 1.45f;
     public bool autoUpdate = true;
     public enum FaceRenderMask { All, Top, Bottom, Left, Right, Front, Back };
     public FaceRenderMask faceRenderMask;
@@ -107,8 +108,8 @@ public class Planet : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(0.5f);
-            yield return StartCoroutine(UpdateMesh());
+            yield return new WaitForSeconds(1f);
+            UpdateMesh();
         }
     }
     
@@ -185,18 +186,37 @@ public class Planet : MonoBehaviour
         _colourGenerator.UpdateElevation(_shapeGenerator.elevationMinMax);
     }
     
-    private IEnumerator UpdateMesh() // updates the mesh
+    // private void UpdateMesh()
+    // {
+    //     List<Task> tasks = new List<Task>();
+    //
+    //     for (int i = 0; i < 6; i++)
+    //     {
+    //         if (meshFilters[i].gameObject.activeSelf)
+    //         {
+    //             int index = i; // Copy the loop variable to avoid a closure issue.
+    //             tasks.Add(Task.Run(() => terrainFaces[index].UpdateTree()));
+    //         }
+    //     }
+    //
+    //     // Optional: wait for all tasks to complete before proceeding.
+    //     Task.WhenAll(tasks).Wait();
+    //
+    //     _colourGenerator.UpdateElevation(_shapeGenerator.elevationMinMax);
+    //     // _colourGenerator.UpdateColours();
+    // }
+    
+    private void UpdateMesh() // updates the mesh
     {
         for (int i = 0; i < 6; i++)
         {
             if (meshFilters[i].gameObject.activeSelf)
             {
                 terrainFaces[i].UpdateTree();
-                yield return null; // yielding null waits until the next frame
+                // terrainFaces[i].UpdateTree();
             }
         }
         _colourGenerator.UpdateElevation(_shapeGenerator.elevationMinMax);
-        yield return null; // yielding null waits until the next frame
         // _colourGenerator.UpdateColours();
     }
     
