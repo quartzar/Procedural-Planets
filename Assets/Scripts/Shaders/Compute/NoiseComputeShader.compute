@@ -1,0 +1,44 @@
+// NoiseComputeShader.compute
+
+#pragma kernel CSMain
+
+#include "../../Shaders/Includes/FractalNoise.cginc"
+#include "../../Shaders/Includes/Maths.cginc"
+
+// The buffer to hold our vertices
+RWStructuredBuffer<float3> VertexBuffer;
+uint numVertices;
+
+float numLayers;
+float scale;
+float persistence;
+float lacunarity;
+float multiplier;
+
+// Continent settings:
+float oceanDepthMultiplier;
+float oceanFloorDepth;
+float oceanFloorSmoothing;
+
+[numthreads(512, 1, 1)]
+void CSMain (uint id : SV_DispatchThreadID)
+{
+    if (id >= numVertices) { return; }
+
+    const float3 vertexPosition = VertexBuffer[id];
+
+    // Noise for landmass shape
+    float continentShape = simpleNoise(vertexPosition, numLayers, scale, persistence, lacunarity, multiplier);
+
+    // Flatten ocean bed & deepen oceans
+    const float oceanFloorShape = -oceanFloorDepth + continentShape * 0.15;
+    continentShape = smoothMax(continentShape, oceanFloorShape, oceanFloorSmoothing);
+    if (continentShape < 0) {
+        continentShape *= 1 + oceanDepthMultiplier;
+    }
+
+    const float finalElevation = 1 + continentShape * 0.01;
+    
+    VertexBuffer[id] = vertexPosition * finalElevation;
+    
+}

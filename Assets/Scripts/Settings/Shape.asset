@@ -12,70 +12,58 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 022d841e4fefeded0af8f485e9bb1c5c, type: 3}
   m_Name: Shape
   m_EditorClassIdentifier: 
-  planetRadius: 201.78
+  planetRadius: 200
   noiseLayers:
   - enabled: 1
     useFirstLayerAsMask: 0
     noiseSettings:
       filterType: 0
       simpleNoiseSettings:
-        strength: 0.07
         numLayers: 8
-        baseRoughness: 1.15
-        roughness: 2.2
+        scale: 1
         persistence: 0.5
-        centre: {x: 1.11, y: 0.9, z: -0.4}
-        minValue: 0.98
+        lacunarity: 2
+        multiplier: 1
       rigidNoiseSettings:
-        strength: 0
         numLayers: 0
-        baseRoughness: 0
-        roughness: 0
+        scale: 1
         persistence: 0
-        centre: {x: 0, y: 0, z: 0}
-        minValue: 0
+        lacunarity: 2
+        multiplier: 1
         weightMultiplier: 0
   - enabled: 1
     useFirstLayerAsMask: 1
     noiseSettings:
       filterType: 1
       simpleNoiseSettings:
-        strength: 0.07
         numLayers: 4
-        baseRoughness: 1.15
-        roughness: 2.2
+        scale: 1
         persistence: 0.5
-        centre: {x: 1.11, y: 0.9, z: -0.4}
-        minValue: 0.98
+        lacunarity: 2
+        multiplier: 1
       rigidNoiseSettings:
-        strength: 1.42
         numLayers: 4
-        baseRoughness: 1.59
-        roughness: 3.3
+        scale: 1
         persistence: 0.5
-        centre: {x: 0, y: 0, z: 0}
-        minValue: 0.37
+        lacunarity: 2
+        multiplier: 1
         weightMultiplier: 0.78
   - enabled: 0
     useFirstLayerAsMask: 1
     noiseSettings:
       filterType: 0
       simpleNoiseSettings:
-        strength: 0.07
         numLayers: 4
-        baseRoughness: 4
-        roughness: 2.71
+        scale: 1
         persistence: 1.37
-        centre: {x: 1.11, y: 0.9, z: -0.4}
-        minValue: 0.99
+        lacunarity: 2
+        multiplier: 1
       rigidNoiseSettings:
-        strength: 1.42
         numLayers: 4
-        baseRoughness: 1.59
-        roughness: 3.3
+        scale: 1
         persistence: 0.5
-        centre: {x: 0, y: 0, z: 0}
-        minValue: 0.37
+        lacunarity: 2
+        multiplier: 1
         weightMultiplier: 0.78
   oceanFloorDepth: 0
   oceanFloorSmoothing: 0

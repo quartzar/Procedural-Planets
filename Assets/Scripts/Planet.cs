@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class Planet : MonoBehaviour
@@ -14,23 +15,23 @@ public class Planet : MonoBehaviour
     public ShapeSettings shapeSettings;
     public ColourSettings colourSettings;
     
+    // public NoiseSettings noiseSettings;
+    public NoiseSettings.SimpleNoiseSettings simpleNoiseSettings;
+    
     [HideInInspector]
     public bool shapeSettingsFoldout;
     [HideInInspector]
     public bool colourSettingsFoldout;
     
-    ShapeGenerator _shapeGenerator = new ShapeGenerator();
-    ColourGenerator _colourGenerator = new ColourGenerator();
-    
     [SerializeField, HideInInspector]
     MeshFilter[] meshFilters;
     TerrainFace[] terrainFaces;
     
+    public ComputeShader noiseShader;
+    
     
     void Initialise()
     {
-        _shapeGenerator.UpdateSettings(shapeSettings);
-        _colourGenerator.UpdateSettings(colourSettings);
         
         if (meshFilters == null || meshFilters.Length == 0)
         {
@@ -39,21 +40,22 @@ public class Planet : MonoBehaviour
         terrainFaces = new TerrainFace[6];
         
         Vector3[] directions = {Vector3.up, Vector3.down, Vector3.left, Vector3.right, Vector3.forward, Vector3.back};
-
+        string[] directionStrings = {"Up", "Down", "Left", "Right", "Forward", "Backward"};
+        
         for (int i = 0; i < 6; i++)
         {
             if (meshFilters[i] == null)
             {
-                GameObject meshObj = new GameObject("mesh");
+                GameObject meshObj = new GameObject("Mesh " + directionStrings[i]);
                 meshObj.transform.parent = transform;
                 
                 meshObj.AddComponent<MeshRenderer>();
                 meshFilters[i] = meshObj.AddComponent<MeshFilter>();
                 meshFilters[i].sharedMesh = new Mesh();
             }
-            meshFilters[i].GetComponent<MeshRenderer>().sharedMaterial = new Material(colourSettings.planetMaterial);
+            meshFilters[i].GetComponent<MeshRenderer>().sharedMaterial = colourSettings.planetMaterial;
             
-            terrainFaces[i] = new TerrainFace(_shapeGenerator, meshFilters[i].sharedMesh, resolution, directions[i]);
+            terrainFaces[i] = new TerrainFace(simpleNoiseSettings, shapeSettings, meshFilters[i].sharedMesh, resolution, directions[i]);
             bool renderFace = faceRenderMask == FaceRenderMask.All || (int)faceRenderMask - 1 == i;
             meshFilters[i].gameObject.SetActive(renderFace);
         }
@@ -63,7 +65,7 @@ public class Planet : MonoBehaviour
     {
         Initialise();
         GenerateMesh();
-        GenerateColours();
+        // GenerateColours();
     }
     
     public void OnShapeSettingsUpdated() // shape settings specific regeneration method
@@ -80,7 +82,7 @@ public class Planet : MonoBehaviour
         if (autoUpdate)
         {
             Initialise();
-            GenerateColours();
+            // GenerateColours();
         }
     }
 
@@ -91,20 +93,20 @@ public class Planet : MonoBehaviour
             if (meshFilters[i].gameObject.activeSelf)
             {
                 terrainFaces[i].ConstructMesh();
+                terrainFaces[i].AddNoiseWithComputeShader(noiseShader);
             }
         }
-        _colourGenerator.UpdateElevation(_shapeGenerator.elevationMinMax);
     }
     
-    private void GenerateColours()
-    {
-       _colourGenerator.UpdateColours();
-       for (int i = 0; i < 6; i++)
-       {
-           if (meshFilters[i].gameObject.activeSelf)
-           {
-               terrainFaces[i].UpdateUVs(_colourGenerator);
-           }
-       }
-    }
+    // private void GenerateColours()
+    // {
+    //    _colourGenerator.UpdateColours();
+    //    for (int i = 0; i < 6; i++)
+    //    {
+    //        if (meshFilters[i].gameObject.activeSelf)
+    //        {
+    //            terrainFaces[i].UpdateUVs(_colourGenerator);
+    //        }
+    //    }
+    // }
 }

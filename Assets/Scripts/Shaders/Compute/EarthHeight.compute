@@ -1,7 +1,7 @@
 #pragma kernel CSMain
 
-#include "../../Includes/FractalNoise.cginc"
-#include "../../Includes/Math.cginc"
+#include "../../Shaders/Includes/SimplexNoise.cginc"
+// #include "../../Includes/Math.cginc"
 //
 
 StructuredBuffer<float3> vertices;

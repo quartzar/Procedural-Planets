@@ -16,14 +16,14 @@ public class NoiseSettings {
     [System.Serializable]
     public class SimpleNoiseSettings
     {
-        public float strength = 1;
         [Range(1, 8)]
         public int numLayers = 1;
-        public float baseRoughness = 1;
-        public float roughness = 2;
+        // [Range(0, 2)]
+        public float scale = 1;
         public float persistence = 0.5f;
-        public Vector3 centre;
-        public float minValue;
+        public float lacunarity = 2;
+        // [Range(0, 1)]
+        public float multiplier = 1;
     }
 
     [System.Serializable]
@@ -31,7 +31,7 @@ public class NoiseSettings {
     {
         public float weightMultiplier = 0.8f;
     }
-
+ 
 
 
 }
