@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 022d841e4fefeded0af8f485e9bb1c5c, type: 3}
   m_Name: Shape
   m_EditorClassIdentifier: 
-  planetRadius: 200
+  planetRadius: 201.78
   noiseLayers:
   - enabled: 1
     useFirstLayerAsMask: 0
@@ -77,6 +77,6 @@ MonoBehaviour:
         centre: {x: 0, y: 0, z: 0}
         minValue: 0.37
         weightMultiplier: 0.78
-  oceanFloorDepth: 0.36
-  oceanFloorSmoothing: 0.138
-  oceanDepthMultiplier: 1000
+  oceanFloorDepth: 0
+  oceanFloorSmoothing: 0
+  oceanDepthMultiplier: 995.27

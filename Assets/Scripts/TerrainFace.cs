@@ -5,12 +5,12 @@ using UnityEngine;
 
 public class TerrainFace
 {
-    private ShapeGenerator _shapeGenerator;
-    private Mesh _mesh;
-    private int _resolution;
-    private Vector3 _localUp;
-    private Vector3 _axisA;
-    private Vector3 _axisB;
+    private readonly ShapeGenerator _shapeGenerator;
+    private readonly Mesh _mesh;
+    private readonly int _resolution;
+    private readonly Vector3 _localUp;
+    private readonly Vector3 _axisA;
+    private readonly Vector3 _axisB;
     
     public TerrainFace(ShapeGenerator shapeGenerator, Mesh mesh, int resolution, Vector3 localUp)
     {
@@ -61,7 +61,6 @@ public class TerrainFace
         _mesh.triangles = triangles;
         _mesh.RecalculateNormals();
         _mesh.uv = uv;
-        _mesh.OptimizeReorderVertexBuffer();
     }
     
     public void UpdateUVs(ColourGenerator colourGenerator)
