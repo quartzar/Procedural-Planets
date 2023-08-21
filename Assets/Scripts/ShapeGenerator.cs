@@ -49,8 +49,27 @@ public class ShapeGenerator {
     
     public float GetScaledElevation(float unscaledElevation)
     {
-        float elevation = Mathf.Max(0, unscaledElevation);
-        elevation = settings.planetRadius * (1 + elevation);
-        return elevation;
+        // float elevation = Mathf.Max(0, unscaledElevation);
+        // elevation = settings.planetRadius * (1 + elevation);
+        
+        // float oceanFloorDepth = settings.planetRadius - settings.oceanFloorDepth;
+        // float oceanFloorShape = -oceanFloorDepth + unscaledElevation * 0.15f;
+        // float elevation = settings.planetRadius * (1 + unscaledElevation);
+        // float continentShape = Mathf.SmoothStep(elevation, oceanFloorShape, settings.oceanFloorSmoothing);
+        //
+        // continentShape *= (continentShape < 0) ? 1 + settings.oceanDepthMultiplier : 1;
+        
+        // float elevation = Mathf.SmoothStep(unscaledElevation, oceanFloorShape, settings.oceanFloorSmoothing);
+        // elevation *= (elevation < 0) ? 1 + settings.oceanDepthMultiplier : 1;
+        
+        float continentShape = unscaledElevation;
+        // float oceanFloorDepth = settings.planetRadius - settings.oceanFloorDepth;
+        
+        float oceanFloorShape = -settings.oceanFloorDepth + continentShape * 0.15f;
+        continentShape = Mathf.Lerp(continentShape, oceanFloorShape, settings.oceanFloorSmoothing);
+        continentShape *= (unscaledElevation < 0) ? 1 + settings.oceanDepthMultiplier : 1;
+        
+        
+        return (1 + continentShape * 0.1f) + settings.planetRadius * (1 + Mathf.Max(0, unscaledElevation));
     }
 }
