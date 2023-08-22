@@ -5,6 +5,8 @@ using UnityEngine;
 namespace Shape {
     public abstract class CelestialBodyShape : ScriptableObject
     {
+        public int seed;
+        
         public ComputeShader heightMapCompute;
         
         private ComputeBuffer _heightBuffer;

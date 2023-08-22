@@ -6,10 +6,6 @@ using UnityEngine;
 
 public class TerrainFace
 {
-    // private readonly SimpleNoiseSettings _continentSettings;
-    // private readonly SimpleNoiseSettings _maskSettings;
-    // private readonly RidgeNoiseSettings _ridgeSettings;
-    // private readonly ShapeSettings _shapeSettings;
     private readonly CelestialBodySettings _body;
     private readonly Mesh _mesh;
     private readonly int _resolution;
@@ -17,15 +13,10 @@ public class TerrainFace
     private readonly Vector3 _localUp;
     private readonly Vector3 _axisA;
     private readonly Vector3 _axisB;
-    private static readonly int Heights = Shader.PropertyToID("heights");
-    private static readonly int Vertices = Shader.PropertyToID("vertices");
+    
 
     public TerrainFace(CelestialBodySettings body, Mesh mesh, int resolution, float radius, Vector3 localUp)
     {
-        // this._continentSettings = continentSettingsSettings;
-        // this._maskSettings = maskSettings;
-        // this._ridgeSettings = ridgeNoiseSettings;
-        // this._shapeSettings = shapeSettings;
         this._body = body;
         this._mesh = mesh;
         this._resolution = resolution;

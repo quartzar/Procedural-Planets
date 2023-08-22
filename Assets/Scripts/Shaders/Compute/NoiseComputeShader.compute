@@ -5,15 +5,10 @@
 #include "../../Shaders/Includes/FractalNoise.cginc"
 #include "../../Shaders/Includes/Maths.cginc"
 
+// Buffers & out-of-bound data
 StructuredBuffer<float3> vertices;
 RWStructuredBuffer<float> heights;
 uint numVertices;
-
-float numLayers;
-float scale;
-float persistence;
-float lacunarity;
-float multiplier;
 
 // Continent settings:
 float oceanDepthMultiplier;
@@ -34,16 +29,14 @@ void CSMain (uint id : SV_DispatchThreadID)
     const float3 vertexPosition = vertices[id];
 
     // Noise for landmass shape
-    // float continentShape = simpleNoise(vertexPosition, numLayers, scale, persistence, lacunarity, multiplier);
     float continentShape = simpleNoise(vertexPosition, noiseParams_continents);
     
     // Flatten ocean bed & deepen oceans
     continentShape = smoothMax(continentShape, -oceanFloorDepth, oceanFloorSmoothing);
     continentShape *= continentShape < 0 ? 1 + oceanDepthMultiplier : 1;
     
-
     // Noise for mountain ridges
-    const float mountainShape = smoothedRidgeNoise(vertexPosition, noiseParams_mountains);
+    const float mountainShape = ridgeNoise(vertexPosition, noiseParams_mountains);
     
     // Mask layer for ocean-land transition
     const float mask = Blend(0, mountainBlend, simpleNoise(vertexPosition, noiseParams_mask));

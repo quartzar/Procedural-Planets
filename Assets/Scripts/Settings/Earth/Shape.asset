@@ -9,7 +9,39 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9901b03747fd868bfb6f5c9558bc889a, type: 3}
+  m_Script: {fileID: 11500000, guid: 5bca40af40b1d865a80fb7604762be83, type: 3}
   m_Name: Shape
   m_EditorClassIdentifier: 
-  shape: {fileID: 0}
+  seed: 177
+  heightMapCompute: {fileID: 7200000, guid: f7338a8ad1a13d98d9156c8ef202dfc2, type: 3}
+  oceanFloorDepth: 1.69
+  oceanDepthMultiplier: 6.14
+  oceanFloorSmoothing: 2.4
+  mountainBlend: 2.82
+  continentNoise:
+    offset: {x: 0, y: 0, z: 0}
+    numLayers: 8
+    scale: 0.8
+    persistence: 0.33
+    lacunarity: 2.94
+    elevation: 2.6
+    verticalShift: 0
+  maskNoise:
+    offset: {x: 0, y: 0, z: 0}
+    numLayers: 3
+    scale: 1.26
+    persistence: 0.55
+    lacunarity: 1.5
+    elevation: 1
+    verticalShift: -0.59
+  ridgeNoise:
+    offset: {x: 0, y: 0, z: 0}
+    numLayers: 6
+    scale: 1.74
+    persistence: 0.48
+    lacunarity: 3.74
+    elevation: 6.38
+    power: 1.87
+    gain: 0.7
+    verticalShift: 0
+    peakSmoothing: 12.94

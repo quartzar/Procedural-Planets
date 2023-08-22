@@ -33,14 +33,14 @@ float simpleNoise(float3 position, float4 params[3])
     /**/
 
     float noiseValue = 0;
-    float frequency = scale;
+    float frequency = scale * 0.01;
     float amplitude = 1;
 
     for (int i = 0; i < numLayers; i++)
     {
         // float v = snoise(position * frequency);
         // noiseValue += (v + 1) * 0.5 * amplitude;
-        noiseValue = snoise(position * frequency) * amplitude;
+        noiseValue += snoise(position * frequency + offset) * amplitude;
         amplitude *= persistence;
         frequency *= lacunarity;
     }
@@ -64,16 +64,16 @@ float ridgeNoise(float3 position, float4 params[3])
     /**/
 
     float noiseValue = 0;
-    float frequency = scale;
+    float frequency = scale * 0.01;
     float amplitude = 1;
     float weight = 1;
 
     for (int i = 0; i < numLayers; i++)
     {
-        float v = 1 - abs(snoise(position * frequency * offset));
+        float v = 1 - abs(snoise(position * frequency + offset));
         v = pow(abs(v), power);
         v *= weight;
-        weight = saturate(v* gain);
+        weight = saturate(v * gain);
 
         noiseValue += v * amplitude;
         amplitude *= persistence;
@@ -86,6 +86,7 @@ float ridgeNoise(float3 position, float4 params[3])
 
 // Sample the noise several times at small offsets from the centre and average the result
 // This reduces some of the harsh jaggedness that can occur
+// From Sebastian Lague
 float smoothedRidgeNoise(float3 pos, float4 params[3]) {
     float3 sphereNormal = normalize(pos);
     float3 axisA = cross(sphereNormal, float3(0,1,0));

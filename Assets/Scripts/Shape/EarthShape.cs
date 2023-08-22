@@ -21,9 +21,9 @@ namespace Shape {
 
         protected override void SetShapeData() // auto set data 
         {
-            continentNoise.SetComputeValues(heightMapCompute, "_continents");
-            maskNoise.SetComputeValues(heightMapCompute, "_mask");
-            ridgeNoise.SetComputeValues(heightMapCompute, "_mountains");
+            continentNoise.SetComputeValues(heightMapCompute, seed, "_continents");
+            maskNoise.SetComputeValues(heightMapCompute, seed, "_mask");
+            ridgeNoise.SetComputeValues(heightMapCompute, seed, "_mountains");
             
             heightMapCompute.SetFloat(Shader.PropertyToID("oceanFloorDepth"), oceanFloorDepth);
             heightMapCompute.SetFloat(Shader.PropertyToID("oceanDepthMultiplier"), oceanDepthMultiplier);
