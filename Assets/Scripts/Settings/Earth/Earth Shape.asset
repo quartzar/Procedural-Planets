@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bca40af40b1d865a80fb7604762be83, type: 3}
+  m_Name: Earth Shape
+  m_EditorClassIdentifier: 
+  heightMapCompute: {fileID: 0}
+  oceanFloorDepth: 1
+  oceanDepthMultiplier: 1
+  oceanFloorSmoothing: 0.5
+  mountainBlend: 1
+  continentNoise:
+    numLayers: 1
+    scale: 0.2
+    persistence: 0.5
+    lacunarity: 2
+    multiplier: 1
+    verticalShift: 0
+  maskNoise:
+    numLayers: 1
+    scale: 0.2
+    persistence: 0.5
+    lacunarity: 2
+    multiplier: 1
+    verticalShift: 0
+  ridgeNoise:
+    offset: {x: 0, y: 0, z: 0}
+    numLayers: 5
+    persistence: 0.5
+    lacunarity: 2
+    scale: 1
+    elevation: 1
+    power: 2
+    gain: 1
+    verticalShift: 0
+    peakSmoothing: 0
