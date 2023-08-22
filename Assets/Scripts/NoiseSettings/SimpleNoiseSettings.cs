@@ -15,6 +15,7 @@ namespace NoiseSettings
         
         public void SetComputeValues(ComputeShader shader, string varSuffix)
         {
+            // Debug.Log("Elevation is " + elevation + " and vertical shift is " + verticalShift + " for " + varSuffix + "");
             float[] noiseParams = {
                 // [0]
                 offset.x,

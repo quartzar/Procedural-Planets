@@ -15,13 +15,13 @@ public class Planet : MonoBehaviour
     public enum FaceRenderMask { All, Top, Bottom, Left, Right, Front, Back };
     public FaceRenderMask faceRenderMask;
     
-    public ShapeSettings shapeSettings;
+    // public ShapeSettings shapeSettings;
     public ColourSettings colourSettings;
     
     // public NoiseSettings noiseSettings;
-    public SimpleNoiseSettings continentNoise;
-    public SimpleNoiseSettings maskNoise;
-    public RidgeNoiseSettings ridgeNoise;
+    // public SimpleNoiseSettings continentNoise;
+    // public SimpleNoiseSettings maskNoise;
+    // public RidgeNoiseSettings ridgeNoise;
     
     [HideInInspector]
     public bool shapeFoldout;
@@ -34,7 +34,7 @@ public class Planet : MonoBehaviour
     MeshFilter[] meshFilters;
     TerrainFace[] terrainFaces;
     
-    public ComputeShader noiseShader;
+    // public ComputeShader noiseShader;
     
     public static MinMax elevationMinMax;
     
@@ -110,15 +110,16 @@ public class Planet : MonoBehaviour
             if (meshFilters[i].gameObject.activeSelf)
             {
                 terrainFaces[i].ConstructMesh();
-                terrainFaces[i].AddNoiseWithComputeShader(noiseShader);
+                terrainFaces[i].NoiseShader();
+                // terrainFaces[i].AddNoiseWithComputeShader(noiseShader);
             }
         }
     }
     
     private void GenerateColours()
     {
-        colourSettings.planetMaterial.SetVector(ElevationMinMax, new Vector4(elevationMinMax.Min * shapeSettings.planetRadius , elevationMinMax.Max * shapeSettings.planetRadius));
-        Debug.Log("Elevation Min: " + elevationMinMax.Min + ", Elevation Max: " + elevationMinMax.Max);
+        colourSettings.planetMaterial.SetVector(ElevationMinMax, new Vector4(elevationMinMax.Min * radius , elevationMinMax.Max * radius));
+        // Debug.Log("Elevation Min: " + elevationMinMax.Min + ", Elevation Max: " + elevationMinMax.Max);
     }
     
     // private void GenerateColours()

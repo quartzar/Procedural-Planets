@@ -78,6 +78,7 @@ public class TerrainFace
     public void NoiseShader()
     {
         ComputeBuffer vertexBuffer = new ComputeBuffer(_mesh.vertexCount, 3 * sizeof(float)); // 3 for x, y, z
+        vertexBuffer.SetData(_mesh.vertices);
         float[] heights = _body.shape.ComputeHeights(vertexBuffer);
         
         // Modify the mesh vertices using the heights

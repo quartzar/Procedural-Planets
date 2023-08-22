@@ -22,6 +22,7 @@ float oceanFloorSmoothing;
 float mountainBlend;
 
 // Experimental; pass full params struct instead
+float4 noiseParams_continents[3];
 float4 noiseParams_mask[3];
 float4 noiseParams_mountains[3];
 
@@ -33,15 +34,16 @@ void CSMain (uint id : SV_DispatchThreadID)
     const float3 vertexPosition = vertices[id];
 
     // Noise for landmass shape
-    float continentShape = simpleNoise(vertexPosition, numLayers, scale, persistence, lacunarity, multiplier);
-
+    // float continentShape = simpleNoise(vertexPosition, numLayers, scale, persistence, lacunarity, multiplier);
+    float continentShape = simpleNoise(vertexPosition, noiseParams_continents);
+    
     // Flatten ocean bed & deepen oceans
     continentShape = smoothMax(continentShape, -oceanFloorDepth, oceanFloorSmoothing);
     continentShape *= continentShape < 0 ? 1 + oceanDepthMultiplier : 1;
     
 
     // Noise for mountain ridges
-    const float mountainShape = ridgeNoise(vertexPosition, noiseParams_mountains);
+    const float mountainShape = smoothedRidgeNoise(vertexPosition, noiseParams_mountains);
     
     // Mask layer for ocean-land transition
     const float mask = Blend(0, mountainBlend, simpleNoise(vertexPosition, noiseParams_mask));
@@ -49,5 +51,4 @@ void CSMain (uint id : SV_DispatchThreadID)
     const float finalElevation = 1 + continentShape * 0.01 + mountainShape * 0.01 * mask;
     
     heights[id] = finalElevation;
-    
 }

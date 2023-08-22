@@ -82,3 +82,20 @@ float ridgeNoise(float3 position, float4 params[3])
 
     return noiseValue * elevation + verticalShift;
 }
+
+
+// Sample the noise several times at small offsets from the centre and average the result
+// This reduces some of the harsh jaggedness that can occur
+float smoothedRidgeNoise(float3 pos, float4 params[3]) {
+    float3 sphereNormal = normalize(pos);
+    float3 axisA = cross(sphereNormal, float3(0,1,0));
+    float3 axisB = cross(sphereNormal, axisA);
+
+    float offsetDst = params[2].w * 0.01;
+    float sample0 = ridgeNoise(pos, params);
+    float sample1 = ridgeNoise(pos - axisA * offsetDst, params);
+    float sample2 = ridgeNoise(pos + axisA * offsetDst, params);
+    float sample3 = ridgeNoise(pos - axisB * offsetDst, params);
+    float sample4 = ridgeNoise(pos + axisB * offsetDst, params);
+    return (sample0 + sample1 + sample2 + sample3 + sample4) / 5;
+}

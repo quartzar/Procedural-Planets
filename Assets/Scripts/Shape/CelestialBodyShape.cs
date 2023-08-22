@@ -21,6 +21,8 @@ namespace Shape {
             int kernelHandle = heightMapCompute.FindKernel("CSMain");
             int numVertices = vertexBuffer.count;
             
+            _heightBuffer = new ComputeBuffer(numVertices, sizeof(float));
+            
             heightMapCompute.SetInt(NumVertices, numVertices);
             heightMapCompute.SetBuffer(kernelHandle, Vertices, vertexBuffer);
             heightMapCompute.SetBuffer(kernelHandle, Heights, _heightBuffer);

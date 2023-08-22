@@ -9,7 +9,7 @@ public class PlanetEditor : Editor
 {
     Planet planet;
     Editor bodyEditor;
-    Editor shapeEditor;
+    // Editor shapeEditor;
     Editor colourEditor;
 
     public override void OnInspectorGUI()
@@ -29,7 +29,7 @@ public class PlanetEditor : Editor
         }
         
         DrawSettingsEditor(planet.body.shape, planet.OnShapeSettingsUpdated, ref planet.shapeFoldout, ref bodyEditor);
-        DrawSettingsEditor(planet.shapeSettings, planet.OnShapeSettingsUpdated, ref planet.shapeSettingsFoldout, ref shapeEditor);
+        // DrawSettingsEditor(planet.shapeSettings, planet.OnShapeSettingsUpdated, ref planet.shapeSettingsFoldout, ref shapeEditor);
         DrawSettingsEditor(planet.colourSettings, planet.OnColourSettingsUpdated, ref planet.colourSettingsFoldout, ref colourEditor);
     }
 

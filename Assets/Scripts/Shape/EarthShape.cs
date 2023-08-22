@@ -25,10 +25,10 @@ namespace Shape {
             maskNoise.SetComputeValues(heightMapCompute, "_mask");
             ridgeNoise.SetComputeValues(heightMapCompute, "_mountains");
             
-            heightMapCompute.SetFloat(Shader.PropertyToID("_oceanFloorDepth"), oceanFloorDepth);
-            heightMapCompute.SetFloat(Shader.PropertyToID("_oceanDepthMultiplier"), oceanDepthMultiplier);
-            heightMapCompute.SetFloat(Shader.PropertyToID("_oceanFloorSmoothing"), oceanFloorSmoothing);
-            heightMapCompute.SetFloat(Shader.PropertyToID("_mountainBlend"), mountainBlend);
+            heightMapCompute.SetFloat(Shader.PropertyToID("oceanFloorDepth"), oceanFloorDepth);
+            heightMapCompute.SetFloat(Shader.PropertyToID("oceanDepthMultiplier"), oceanDepthMultiplier);
+            heightMapCompute.SetFloat(Shader.PropertyToID("oceanFloorSmoothing"), oceanFloorSmoothing);
+            heightMapCompute.SetFloat(Shader.PropertyToID("mountainBlend"), mountainBlend);
         }
     }
 }
