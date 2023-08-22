@@ -16,55 +16,11 @@ MonoBehaviour:
   noiseLayers:
   - enabled: 1
     useFirstLayerAsMask: 0
-    noiseSettings:
-      filterType: 0
-      simpleNoiseSettings:
-        numLayers: 8
-        scale: 1
-        persistence: 0.5
-        lacunarity: 2
-        multiplier: 1
-      rigidNoiseSettings:
-        numLayers: 0
-        scale: 1
-        persistence: 0
-        lacunarity: 2
-        multiplier: 1
-        weightMultiplier: 0
   - enabled: 1
     useFirstLayerAsMask: 1
-    noiseSettings:
-      filterType: 1
-      simpleNoiseSettings:
-        numLayers: 4
-        scale: 1
-        persistence: 0.5
-        lacunarity: 2
-        multiplier: 1
-      rigidNoiseSettings:
-        numLayers: 4
-        scale: 1
-        persistence: 0.5
-        lacunarity: 2
-        multiplier: 1
-        weightMultiplier: 0.78
   - enabled: 0
     useFirstLayerAsMask: 1
-    noiseSettings:
-      filterType: 0
-      simpleNoiseSettings:
-        numLayers: 4
-        scale: 1
-        persistence: 1.37
-        lacunarity: 2
-        multiplier: 1
-      rigidNoiseSettings:
-        numLayers: 4
-        scale: 1
-        persistence: 0.5
-        lacunarity: 2
-        multiplier: 1
-        weightMultiplier: 0.78
-  oceanFloorDepth: 0
-  oceanFloorSmoothing: 0
-  oceanDepthMultiplier: 995.27
+  oceanFloorDepth: 1
+  oceanFloorSmoothing: 3.77
+  oceanDepthMultiplier: 1
+  mountainBlend: 16.45
