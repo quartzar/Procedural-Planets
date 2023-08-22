@@ -11,12 +11,13 @@ public class ShapeSettings : ScriptableObject
     public float oceanFloorDepth = 1;
     public float oceanFloorSmoothing = .5f;
     public float oceanDepthMultiplier = 1;
+    public float mountainBlend = 1;
     
     [System.Serializable]
     public class NoiseLayer
     {
         public bool enabled = true;
         public bool useFirstLayerAsMask;
-        public NoiseSettings noiseSettings;
+        // public NoiseSettings noiseSettings;
     }
 }
