@@ -5,8 +5,8 @@
 #include "../../Shaders/Includes/FractalNoise.cginc"
 #include "../../Shaders/Includes/Maths.cginc"
 
-// The buffer to hold our vertices
-RWStructuredBuffer<float3> VertexBuffer;
+StructuredBuffer<float3> vertices;
+RWStructuredBuffer<float> heights;
 uint numVertices;
 
 float numLayers;
@@ -19,26 +19,35 @@ float multiplier;
 float oceanDepthMultiplier;
 float oceanFloorDepth;
 float oceanFloorSmoothing;
+float mountainBlend;
+
+// Experimental; pass full params struct instead
+float4 noiseParams_mask[3];
+float4 noiseParams_mountains[3];
 
 [numthreads(512, 1, 1)]
 void CSMain (uint id : SV_DispatchThreadID)
 {
     if (id >= numVertices) { return; }
 
-    const float3 vertexPosition = VertexBuffer[id];
+    const float3 vertexPosition = vertices[id];
 
     // Noise for landmass shape
     float continentShape = simpleNoise(vertexPosition, numLayers, scale, persistence, lacunarity, multiplier);
 
     // Flatten ocean bed & deepen oceans
-    const float oceanFloorShape = -oceanFloorDepth + continentShape * 0.15;
-    continentShape = smoothMax(continentShape, oceanFloorShape, oceanFloorSmoothing);
-    if (continentShape < 0) {
-        continentShape *= 1 + oceanDepthMultiplier;
-    }
-
-    const float finalElevation = 1 + continentShape * 0.01;
+    continentShape = smoothMax(continentShape, -oceanFloorDepth, oceanFloorSmoothing);
+    continentShape *= continentShape < 0 ? 1 + oceanDepthMultiplier : 1;
     
-    VertexBuffer[id] = vertexPosition * finalElevation;
+
+    // Noise for mountain ridges
+    const float mountainShape = ridgeNoise(vertexPosition, noiseParams_mountains);
+    
+    // Mask layer for ocean-land transition
+    const float mask = Blend(0, mountainBlend, simpleNoise(vertexPosition, noiseParams_mask));
+    
+    const float finalElevation = 1 + continentShape * 0.01 + mountainShape * 0.01 * mask;
+    
+    heights[id] = finalElevation;
     
 }
