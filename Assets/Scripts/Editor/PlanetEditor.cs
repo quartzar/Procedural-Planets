@@ -8,6 +8,7 @@ using UnityEngine;
 public class PlanetEditor : Editor
 {
     Planet planet;
+    Editor bodyEditor;
     Editor shapeEditor;
     Editor colourEditor;
 
@@ -27,6 +28,7 @@ public class PlanetEditor : Editor
             planet.GeneratePlanet();
         }
         
+        DrawSettingsEditor(planet.body.shape, planet.OnShapeSettingsUpdated, ref planet.shapeFoldout, ref bodyEditor);
         DrawSettingsEditor(planet.shapeSettings, planet.OnShapeSettingsUpdated, ref planet.shapeSettingsFoldout, ref shapeEditor);
         DrawSettingsEditor(planet.colourSettings, planet.OnColourSettingsUpdated, ref planet.colourSettingsFoldout, ref colourEditor);
     }
