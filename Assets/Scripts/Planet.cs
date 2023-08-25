@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using NoiseSettings;
 using Shape;
 using Unity.Mathematics;
+using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
 
 public class Planet : MonoBehaviour
@@ -11,17 +13,16 @@ public class Planet : MonoBehaviour
     [Range(2, 2048)]
     public int resolution = 10;
     public float radius = 200f;
+    public bool spawnOcean = false;
+    public float oceanScale = 1f;
     public bool autoUpdate = true;
     public enum FaceRenderMask { All, Top, Bottom, Left, Right, Front, Back };
     public FaceRenderMask faceRenderMask;
     
-    // public ShapeSettings shapeSettings;
     public ColourSettings colourSettings;
     
-    // public NoiseSettings noiseSettings;
-    // public SimpleNoiseSettings continentNoise;
-    // public SimpleNoiseSettings maskNoise;
-    // public RidgeNoiseSettings ridgeNoise;
+    public GameObject oceanPrefab;
+    private GameObject _oceanSphere;
     
     [HideInInspector]
     public bool shapeFoldout;
@@ -33,8 +34,6 @@ public class Planet : MonoBehaviour
     [SerializeField, HideInInspector]
     MeshFilter[] meshFilters;
     TerrainFace[] terrainFaces;
-    
-    // public ComputeShader noiseShader;
     
     public static MinMax elevationMinMax;
     
@@ -60,6 +59,7 @@ public class Planet : MonoBehaviour
         
         for (int i = 0; i < 6; i++)
         {
+            // Create mesh filters only if they don't exist
             if (meshFilters[i] == null)
             {
                 GameObject meshObj = new GameObject("Mesh " + directionStrings[i]);
@@ -75,6 +75,15 @@ public class Planet : MonoBehaviour
             bool renderFace = faceRenderMask == FaceRenderMask.All || (int)faceRenderMask - 1 == i;
             meshFilters[i].gameObject.SetActive(renderFace);
         }
+        
+        // Add the ocean sphere prefab
+        if (_oceanSphere == null && spawnOcean)
+        {
+            _oceanSphere = Instantiate(oceanPrefab, transform.position, Quaternion.identity);
+            _oceanSphere.transform.parent = transform;
+            float scale = (radius * 100f) + oceanScale;
+            _oceanSphere.transform.localScale = new Vector3(scale, scale, scale);
+        }
     }
     
     public void GeneratePlanet() // general regeneration method
@@ -82,6 +91,7 @@ public class Planet : MonoBehaviour
         Initialise();
         GenerateMesh();
         GenerateColours();
+        UpdateOcean();
     }
     
     public void OnShapeSettingsUpdated() // shape settings specific regeneration method
@@ -120,6 +130,27 @@ public class Planet : MonoBehaviour
     {
         colourSettings.planetMaterial.SetVector(ElevationMinMax, new Vector4(elevationMinMax.Min * radius , elevationMinMax.Max * radius));
         // Debug.Log("Elevation Min: " + elevationMinMax.Min + ", Elevation Max: " + elevationMinMax.Max);
+    }
+    
+    private void UpdateOcean()
+    {
+        if (spawnOcean)
+        {
+            float scale = (radius * 100f) + oceanScale * 10f;
+            _oceanSphere.transform.localScale = new Vector3(scale, scale, scale);
+        }
+        else if (_oceanSphere != null)
+        {
+            // check if in edit mode
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                Destroy(_oceanSphere);
+            }
+            else
+            {
+                DestroyImmediate(_oceanSphere);
+            }
+        }
     }
     
     // private void GenerateColours()

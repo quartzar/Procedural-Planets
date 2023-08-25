@@ -16,7 +16,7 @@ Material:
   m_InvalidKeywords: []
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 1
-  m_DoubleSidedGI: 1
+  m_DoubleSidedGI: 0
   m_CustomRenderQueue: 3050
   stringTagMap: {}
   disabledShaderPasses: []
@@ -39,13 +39,16 @@ Material:
     m_Ints: []
     m_Floats:
     - _Depth: 1.57
-    - _Edge_Froth_Scale_1: 40000
-    - _Edge_Froth_Scale_2: -40000
+    - _Edge_Froth_Scale_1: 10000
+    - _Edge_Froth_Scale_2: -90000
     - _Edge_Froth_Smoothness: 1.25
-    - _Edge_Froth_Speed_1: 0.5
+    - _Edge_Froth_Speed_1: 0.3
     - _Edge_Froth_Speed_2: 0.27
     - _Edge_Froth_Strength: -1.56
     - _Edge_Froth_Width: 0.19
+    - _Edge_Ripples_Frequency: 3.4
+    - _Edge_Ripples_Scale: 1365.62
+    - _Edge_Ripples_Speed: 0.5
     - _Metallic: 0.33
     - _Normal_Strength: 29
     - _QueueControl: 1
@@ -61,6 +64,8 @@ Material:
     m_Colors:
     - _Deep_Colour: {r: 0, g: 0.28241897, b: 1, a: 1}
     - _Edge_Froth_Colour: {r: 3.2490098, g: 3.2490098, b: 3.2490098, a: 0.94509804}
+    - _Edge_Ripples_Colour: {r: 0.019236634, g: 0.019236634, b: 0.019236634, a: 0}
+    - _Edge_Ripples_Offset: {r: 0, g: 0, b: 0, a: 0}
     - _Shallow_Colour: {r: 0, g: 0.69120336, b: 1, a: 0.1882353}
   m_BuildTextureStacks: []
 --- !u!114 &6523056039227268195
