@@ -8,6 +8,12 @@ namespace Shape {
         public int seed;
         
         public ComputeShader heightMapCompute;
+        public ComputeShader perturbCompute;
+        
+        public bool perturbVertices;
+        [Range(0, 1)]
+        public float perturbStrength = 0.75f;
+        
         
         private ComputeBuffer _heightBuffer;
         
@@ -15,6 +21,7 @@ namespace Shape {
         private static readonly int NumVertices = Shader.PropertyToID("numVertices");
         private static readonly int Vertices = Shader.PropertyToID("vertices");
         private static readonly int Heights = Shader.PropertyToID("heights");
+        private static readonly int PerturbStrength = Shader.PropertyToID("perturbStrength");
         
         public virtual float[] ComputeHeights(ComputeBuffer vertexBuffer)
         {
@@ -37,10 +44,29 @@ namespace Shape {
             float[] heights = new float[numVertices];
             _heightBuffer.GetData(heights);
             
-            vertexBuffer.Release();
+            if (!perturbVertices) { vertexBuffer.Release(); }
             _heightBuffer.Release();
             
             return heights;
+        }
+        
+        public virtual void PerturbVertices(ComputeBuffer vertexBuffer, ref Vector3[] vertices)
+        {
+            if (!perturbVertices) return;
+            
+            int kernelHandle = perturbCompute.FindKernel("CSMain");
+            int numVertices = vertexBuffer.count;
+            
+            perturbCompute.SetInt(NumVertices, numVertices);
+            perturbCompute.SetFloat(PerturbStrength, perturbStrength);
+            perturbCompute.SetBuffer(kernelHandle, Vertices, vertexBuffer);
+            
+            int threadsPerGroup = 512;
+            int numThreadGroups = Mathf.CeilToInt(numVertices / (float)threadsPerGroup);
+            perturbCompute.Dispatch(kernelHandle, numThreadGroups, 1, 1);
+            
+            vertexBuffer.GetData(vertices);
+            vertexBuffer.Release();
         }
         
         protected virtual void SetShapeData() {}

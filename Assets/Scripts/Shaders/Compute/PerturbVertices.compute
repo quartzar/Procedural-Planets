@@ -1,0 +1,38 @@
+#pragma kernel CSMain
+
+#include "../../Shaders/Includes/FractalNoise.cginc"
+
+RWStructuredBuffer<float3> vertices;
+uint numVertices;
+float perturbStrength;
+
+//
+float3 perturb(float3 position)
+{
+    const float scale = 10;
+    float fx = simpleNoise(position * 1.1, 2, scale, 0.5, 2, 1);
+    float fy = simpleNoise(position * 1.2, 2, scale, 0.5, 2, 1);
+    float fz = simpleNoise(position * 1.3, 2, scale, 0.5, 2, 1);
+
+    float3 offset = float3(fx, fy, fz);
+    offset = smoothstep(-1, 1, offset) * 2 - 1;
+
+    return offset;
+}
+//
+
+[numthreads(512,1,1)]
+void CSMain (uint id : SV_DispatchThreadID)
+{
+    if (id >= numVertices) { return; }
+
+    const float3 vertexPosition = vertices[id];
+    const float height = length(vertexPosition);
+
+    const float3 offset = perturb(vertexPosition);
+    float3 newPosition = vertexPosition + offset * perturbStrength;
+
+    newPosition = normalize(newPosition) * height;
+
+    vertices[id] = newPosition; 
+}
