@@ -42,10 +42,24 @@ public class Planet : MonoBehaviour
     private static readonly int PlanetTexture = Shader.PropertyToID("_PlanetTexture");
     
     public CelestialBodySettings body;
-    
-    
+    private bool _isheightMapComputeNull;
+
+
+    private void Awake()
+    {
+        _isheightMapComputeNull = body.shape.heightMapCompute == null;
+    }
+
     void Initialise()
     {
+        // Enforce resolution is an odd number
+        if (resolution % 2 == 0)
+        {
+            resolution++;
+        }
+        
+        _isheightMapComputeNull = body.shape.heightMapCompute == null;
+        
         elevationMinMax = new MinMax();
         
         if (meshFilters == null || meshFilters.Length == 0)
@@ -120,7 +134,10 @@ public class Planet : MonoBehaviour
             if (meshFilters[i].gameObject.activeSelf)
             {
                 terrainFaces[i].ConstructMesh();
-                terrainFaces[i].NoiseShader();
+                if (!_isheightMapComputeNull)
+                {
+                    terrainFaces[i].NoiseShader();
+                }
                 // terrainFaces[i].AddNoiseWithComputeShader(noiseShader);
             }
         }

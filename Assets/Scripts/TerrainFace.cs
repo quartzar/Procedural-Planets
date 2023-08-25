@@ -26,6 +26,7 @@ public class TerrainFace
         _axisA = new Vector3(localUp.y, localUp.z, localUp.x);
         _axisB = Vector3.Cross(localUp, _axisA);
     }
+    
 
     public void ConstructMesh()
     {
@@ -46,13 +47,26 @@ public class TerrainFace
                 
                 if (x != _resolution - 1 && y != _resolution - 1)
                 {
-                    triangles[triIndex + 0] = i;
-                    triangles[triIndex + 1] = i + _resolution + 1;
-                    triangles[triIndex + 2] = i + _resolution;
-                    
-                    triangles[triIndex + 3] = i;
-                    triangles[triIndex + 4] = i + 1;
-                    triangles[triIndex + 5] = i + _resolution + 1;
+                    if ((x + y) % 2 != 0)
+                    {
+                        triangles[triIndex + 0] = i;
+                        triangles[triIndex + 1] = i + _resolution + 1;
+                        triangles[triIndex + 2] = i + _resolution;
+
+                        triangles[triIndex + 3] = i;
+                        triangles[triIndex + 4] = i + 1;
+                        triangles[triIndex + 5] = i + _resolution + 1;
+                    }
+                    else
+                    {
+                        triangles[triIndex + 0] = i;
+                        triangles[triIndex + 1] = i + 1;
+                        triangles[triIndex + 2] = i + _resolution;
+                        
+                        triangles[triIndex + 3] = i + 1;
+                        triangles[triIndex + 4] = i + _resolution + 1;
+                        triangles[triIndex + 5] = i + _resolution;
+                    }
                     triIndex += 6;
                 }
             }
@@ -70,10 +84,14 @@ public class TerrainFace
     {
         ComputeBuffer vertexBuffer = new ComputeBuffer(_mesh.vertexCount, 3 * sizeof(float)); // 3 for x, y, z
         vertexBuffer.SetData(_mesh.vertices);
+        
         float[] heights = _body.shape.ComputeHeights(vertexBuffer);
         
         // Modify the mesh vertices using the heights
         Vector3[] modifiedVertices = _mesh.vertices;
+        
+        _body.shape.PerturbVertices(vertexBuffer, ref modifiedVertices);
+        
         for (int i = 0; i < modifiedVertices.Length; i++)
         {
             float height = heights[i];
