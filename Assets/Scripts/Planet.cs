@@ -12,6 +12,7 @@ public class Planet : MonoBehaviour
 {
     [Range(2, 2048)]
     public int resolution = 10;
+    public int subdivisions = 1;
     public float radius = 200f;
     public bool spawnOcean = false;
     public float oceanScale = 1f;
@@ -85,7 +86,7 @@ public class Planet : MonoBehaviour
             }
             meshFilters[i].GetComponent<MeshRenderer>().sharedMaterial = colourSettings.planetMaterial;
             
-            terrainFaces[i] = new TerrainFace(body, meshFilters[i].sharedMesh, resolution, radius, directions[i]);
+            terrainFaces[i] = new TerrainFace(body, meshFilters[i].sharedMesh, resolution, subdivisions, radius, directions[i]);
             bool renderFace = faceRenderMask == FaceRenderMask.All || (int)faceRenderMask - 1 == i;
             meshFilters[i].gameObject.SetActive(renderFace);
         }
@@ -136,7 +137,7 @@ public class Planet : MonoBehaviour
                 terrainFaces[i].ConstructMesh();
                 if (!_isheightMapComputeNull)
                 {
-                    terrainFaces[i].NoiseShader();
+                    // terrainFaces[i].NoiseShader();
                 }
                 // terrainFaces[i].AddNoiseWithComputeShader(noiseShader);
             }

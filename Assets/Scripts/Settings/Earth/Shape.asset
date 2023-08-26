@@ -15,7 +15,7 @@ MonoBehaviour:
   seed: 69
   heightMapCompute: {fileID: 7200000, guid: f7338a8ad1a13d98d9156c8ef202dfc2, type: 3}
   perturbCompute: {fileID: 7200000, guid: f20511a6cad4462908ef9f0942b8d10b, type: 3}
-  perturbVertices: 1
+  perturbVertices: 0
   perturbStrength: 0.341
   oceanFloorDepth: 1.69
   oceanDepthMultiplier: 6.14
