@@ -47,8 +47,8 @@ public class TerrainFace
                 
                 if (x != _resolution - 1 && y != _resolution - 1)
                 {
-                    if ((x + y) % 2 != 0)
-                    {
+                    // if ((x + y) % 2 != 0)
+                    // {
                         triangles[triIndex + 0] = i;
                         triangles[triIndex + 1] = i + _resolution + 1;
                         triangles[triIndex + 2] = i + _resolution;
@@ -56,17 +56,17 @@ public class TerrainFace
                         triangles[triIndex + 3] = i;
                         triangles[triIndex + 4] = i + 1;
                         triangles[triIndex + 5] = i + _resolution + 1;
-                    }
-                    else
-                    {
-                        triangles[triIndex + 0] = i;
-                        triangles[triIndex + 1] = i + 1;
-                        triangles[triIndex + 2] = i + _resolution;
-                        
-                        triangles[triIndex + 3] = i + 1;
-                        triangles[triIndex + 4] = i + _resolution + 1;
-                        triangles[triIndex + 5] = i + _resolution;
-                    }
+                    // }
+                    // else
+                    // {
+                    //     triangles[triIndex + 0] = i;
+                    //     triangles[triIndex + 1] = i + 1;
+                    //     triangles[triIndex + 2] = i + _resolution;
+                    //     
+                    //     triangles[triIndex + 3] = i + 1;
+                    //     triangles[triIndex + 4] = i + _resolution + 1;
+                    //     triangles[triIndex + 5] = i + _resolution;
+                    // }
                     triIndex += 6;
                 }
             }
@@ -89,8 +89,13 @@ public class TerrainFace
         
         // Modify the mesh vertices using the heights
         Vector3[] modifiedVertices = _mesh.vertices;
-        
         _body.shape.PerturbVertices(vertexBuffer, ref modifiedVertices);
+        
+        // Vector3[] modifiedVertices = _mesh.vertices;
+        // vertexBuffer.SetData(modifiedVertices);
+        // _body.shape.PerturbVertices(vertexBuffer, ref modifiedVertices);
+        // float[] heights = _body.shape.ComputeHeights(vertexBuffer);
+        
         
         for (int i = 0; i < modifiedVertices.Length; i++)
         {
