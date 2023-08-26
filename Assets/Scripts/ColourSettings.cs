@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu()]
 public class ColourSettings : ScriptableObject
 {
-    public Material planetMaterial;   
+    public Material planetMaterial;        
     // public BiomeColourSettings biomeColourSettings;
     // public Gradient oceanColour;
     //
@@ -18,7 +18,7 @@ public class ColourSettings : ScriptableObject
     //     public float noiseStrength;
     //     [Range(0,1)]
     //     public float blendAmount;
-    //     
+    //      
     //     [System.Serializable]
     //     public class Biome
     //     {
