@@ -34,10 +34,10 @@ public class TerrainFace
         // Initialize the mesh with a single square
         _mesh.Clear();
         _mesh.vertices = new Vector3[] { 
-            _localUp + _axisA + _axisB,
-            _localUp + _axisA - _axisB,
-            _localUp - _axisA + _axisB,
-            _localUp - _axisA - _axisB 
+            (_localUp + _axisA + _axisB).normalized * _radius,
+            (_localUp + _axisA - _axisB).normalized * _radius,
+            (_localUp - _axisA + _axisB).normalized * _radius,
+            (_localUp - _axisA - _axisB).normalized * _radius 
         };
         _mesh.triangles = new int[] { 0, 2, 1, 1, 2, 3 };
         _mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
@@ -73,7 +73,7 @@ public class TerrainFace
             if (d01 > d12 && d01 > d20)
             {
                 // The longest edge is v0-v1
-                Vector3 m = (v0 + v1) / 2;
+                Vector3 m = ((v0 + v1) / 2).normalized * _radius;
                 newVertices.Add(m);
                 int midIndex = newVertices.Count - 1;
 
@@ -83,7 +83,7 @@ public class TerrainFace
             else if (d12 > d01 && d12 > d20)
             {
                 // The longest edge is v1-v2
-                Vector3 m = (v1 + v2) / 2;
+                Vector3 m = ((v1 + v2) / 2).normalized * _radius;
                 newVertices.Add(m);
                 int midIndex = newVertices.Count - 1;
 
@@ -93,7 +93,7 @@ public class TerrainFace
             else
             {
                 // The longest edge is v2-v0
-                Vector3 m = (v2 + v0) / 2;
+                Vector3 m = ((v2 + v0) / 2).normalized * _radius;
                 newVertices.Add(m);
                 int midIndex = newVertices.Count - 1;
 
