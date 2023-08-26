@@ -12,7 +12,7 @@ float simpleNoise(float3 position, int numLayers, float scale, float persistence
     {
         // float v = snoise(position * frequency);
         // noiseValue += (v + 1) * 0.5 * amplitude;
-        noiseValue = snoise(position * frequency) * amplitude;
+        noiseValue += snoise(position * frequency) * amplitude;
         amplitude *= persistence;
         frequency *= lacunarity;
     }
