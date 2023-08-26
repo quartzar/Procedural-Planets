@@ -45,6 +45,7 @@ namespace Shape {
             _heightBuffer.GetData(heights);
             
             if (!perturbVertices) { vertexBuffer.Release(); }
+            // vertexBuffer.Release();
             _heightBuffer.Release();
             
             return heights;
@@ -58,7 +59,7 @@ namespace Shape {
             int numVertices = vertexBuffer.count;
             
             perturbCompute.SetInt(NumVertices, numVertices);
-            perturbCompute.SetFloat(PerturbStrength, perturbStrength);
+            perturbCompute.SetFloat(PerturbStrength, perturbStrength * 0.1f);
             perturbCompute.SetBuffer(kernelHandle, Vertices, vertexBuffer);
             
             int threadsPerGroup = 512;
