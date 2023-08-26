@@ -10,9 +10,9 @@ float perturbStrength;
 float3 perturb(float3 position)
 {
     const float scale = 10;
-    float fx = simpleNoise(position * 1.1, 2, scale, 0.5, 2, 1);
-    float fy = simpleNoise(position * 1.2, 2, scale, 0.5, 2, 1);
-    float fz = simpleNoise(position * 1.3, 2, scale, 0.5, 2, 1);
+    float fx = simpleNoise(position * 1.01, 2, scale, 0.5, 2, 1);
+    float fy = simpleNoise(position * 0.99, 2, scale, 0.5, 2, 1);
+    float fz = simpleNoise(position * 1.00, 2, scale, 0.5, 2, 1);
 
     float3 offset = float3(fx, fy, fz);
     offset = smoothstep(-1, 1, offset) * 2 - 1;
