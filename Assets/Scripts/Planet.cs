@@ -45,10 +45,64 @@ public class Planet : MonoBehaviour
     public CelestialBodySettings body;
     private bool _isheightMapComputeNull;
 
+    
+    // // //
+    
+    public static readonly float CullingMinAngle = 1.45f;
+    
+    public Transform player;
+    [HideInInspector]
+    public float distanceToPlayer;
+    [HideInInspector]
+    public float distanceToPlayerSqr;
+    public static float size;
+    public static bool isEditor = true;
+    
+    public static readonly float[] DetailLevelDistances = new float[] {
+        Mathf.Infinity,
+        3000f,
+        1000f,
+        500f,
+        100f,
+        50f,
+        40f,
+        35f,
+        30f,
+        20f
+    };
+    
+    public static readonly int MaxDetailLevel = DetailLevelDistances.Length - 1;
+    
+    // // //
+    private void Update()
+    {
+        distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        distanceToPlayerSqr = distanceToPlayer * distanceToPlayer;
+    }
+    
+    private void Start()
+    {
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+        GeneratePlanet();
+        isEditor = false;
+        StartCoroutine(PlanetGenerationLoop());
+    }
+    
+    private IEnumerator PlanetGenerationLoop()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(0.5f);
+            UpdateMesh();
+        }
+    }
 
     private void Awake()
     {
         _isheightMapComputeNull = body.shape.heightMapCompute == null;
+        
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+        distanceToPlayer = Vector3.Distance(transform.position, player.position);
     }
 
     void Initialise()
@@ -62,6 +116,10 @@ public class Planet : MonoBehaviour
         _isheightMapComputeNull = body.shape.heightMapCompute == null;
         
         elevationMinMax = new MinMax();
+        
+        size = radius;
+        
+        player = GameObject.FindGameObjectWithTag("Player").transform;
         
         if (meshFilters == null || meshFilters.Length == 0)
         {
@@ -86,7 +144,7 @@ public class Planet : MonoBehaviour
             }
             meshFilters[i].GetComponent<MeshRenderer>().sharedMaterial = colourSettings.planetMaterial;
             
-            terrainFaces[i] = new TerrainFace(body, meshFilters[i].sharedMesh, resolution, subdivisions, radius, directions[i]);
+            terrainFaces[i] = new TerrainFace(this, body, meshFilters[i].sharedMesh, resolution, subdivisions, radius, directions[i]);
             bool renderFace = faceRenderMask == FaceRenderMask.All || (int)faceRenderMask - 1 == i;
             meshFilters[i].gameObject.SetActive(renderFace);
         }
@@ -134,12 +192,25 @@ public class Planet : MonoBehaviour
         {
             if (meshFilters[i].gameObject.activeSelf)
             {
-                terrainFaces[i].ConstructMesh();
-                if (!_isheightMapComputeNull)
-                {
-                    // terrainFaces[i].NoiseShader();
-                }
+                // terrainFaces[i].ConstructMesh();
+                terrainFaces[i].ConstructTree();
+                
+                // if (!_isheightMapComputeNull)
+                // {
+                //     terrainFaces[i].NoiseShader();
+                // }
                 // terrainFaces[i].AddNoiseWithComputeShader(noiseShader);
+            }
+        }
+    }
+    
+    private void UpdateMesh()
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            if (meshFilters[i].gameObject.activeSelf)
+            {
+                terrainFaces[i].ConstructTree();
             }
         }
     }
